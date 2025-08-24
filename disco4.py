@@ -1,6 +1,6 @@
 from playwright.sync_api import sync_playwright
 count = 0
-countten = 10
+count2 = 1
 button_umu = input("DMを作成ボタンがありますか？(y/n)")
 if button_umu == "y":
   nth_dis = 4
@@ -41,9 +41,10 @@ with sync_playwright() as p:
       if nth_dis != 3:
         page.click("xpath=//div[normalize-space(text())='グループの作成']")
      nth_dis += 1
-     if count == countten:#10回おきに6分待機
-       page.wait_for_timeout(360000)
-       countten += 10
+     if count % 10 == 0:#10回おきに待った回数×1分+6分待機
+       page.wait_for_timeout(count2 * 60000 + 360000)
+       count2 += 1
      count += 1
     print(f"{kaisuu}回グループにターゲットを入れて抜けました。終了します。")
     browser.close()
+
