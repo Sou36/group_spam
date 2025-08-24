@@ -39,10 +39,11 @@ with sync_playwright() as p:
      #抜ける確認ボタン
      page.wait_for_selector(f"xpath=//button/div[normalize-space(text())='グループから脱退する']",timeout=10000)
      page.click(f"xpath=//button/div[normalize-space(text())='グループから脱退する']")
-     if count % 10 == 0:#10回おきに6分待機
+     if count % 10 == 0:##10回おきに待った回数×1分+6分待機
        page.wait_for_timeout(count2 * 60000 + 360000)
        count2 += 1
      count += 1
     print(f"{kaisuu}回グループにターゲットを入れて抜けました。終了します。")
     browser.close()
+
 
