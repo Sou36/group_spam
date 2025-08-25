@@ -13,5 +13,4 @@ with sync_playwright() as p:
     # ログイン後の状態を保存
     context.storage_state(path="./discord_login.json")
     print("ログイン情報を discord_login.json に保存しました。")
-    print("次はdisco2.pyを起動してください。")
     browser.close()

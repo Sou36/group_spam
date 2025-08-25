@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 count = 0
 countten = 10
 
-print("先にターゲットが同じなグループを一個作ってください。")
 button_umu = input("DMを作成ボタンがありますか？(y/n)")
 kaisuu = int(input("グループスパムの回数: "))
 id1 = input("ターゲット1人目のdiscordID: ")
@@ -43,7 +42,10 @@ with sync_playwright() as p:
        checkbox = user.locator("span[data-toggleable-component='checkbox']")
        checkbox.click()
        page.locator(f"xpath=//span[normalize-space(text())='グループDMの作成']").click()
-     page.click(f"xpath=//div[normalize-space(text())='グループの作成']")
+   
+     locator = page.locator(f"xpath=//div[normalize-space(text())='グループの作成']")
+     if locator.is_visible():
+      locator.click()
      page.wait_for_timeout(2000)
      if count > 0 and count % 10 == 0:
         page.wait_for_timeout(605000)

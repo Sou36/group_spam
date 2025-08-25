@@ -18,7 +18,7 @@ with sync_playwright() as p:
     page = context.new_page()
     page.goto("https://discord.com/channels/@me") #最初に開く画面
     page.wait_for_timeout(5000)
-    while kaisuu != countten:
+    while kaisuu != count:
      page.locator("li").nth(nth_dis).click()
      page.wait_for_selector("div[role='button'][aria-label='DMにフレンドを追加']",timeout=10000)
      page.locator("div[role='button'][aria-label='DMにフレンドを追加']").click()
