@@ -2,7 +2,7 @@ from playwright.sync_api import sync_playwright
 from datetime import datetime
 count = 0
 count2 = 1
-button_umu = input("DMを作成ボタンがありますか？(y/n)")
+button_umu = input("DMを作成ボタンがありますか？(y/n): ")
 if button_umu == "y":
   nth_dis = 4
 if button_umu == "n":
@@ -36,10 +36,10 @@ with sync_playwright() as p:
      page.wait_for_timeout(2000)
      target = page.locator("li").nth(nth_dis)
      target.click(button="right")
-     page.click(f"xpath=//div[normalize-space(text())='グループから脱退する']")
+     page.click("xpath=//div[normalize-space(text())='グループから脱退する']")
      #抜ける確認ボタン
-     page.wait_for_selector(f"xpath=//button/div[normalize-space(text())='グループから脱退する']",timeout=10000)
-     page.click(f"xpath=//button/div[normalize-space(text())='グループから脱退する']")
+     page.wait_for_selector("xpath=//button/div[normalize-space(text())='グループから脱退する']",timeout=10000)
+     page.click("xpath=//button/div[normalize-space(text())='グループから脱退する']")
      if count > 0 and count % 10 == 0:##10回おきに待った回数×1分+6分待機
        time = datetime.now().strftime("%H:%M:%S")
        print(f"待機開始{time}。現在の待機時間は{count2 + 6}分です。")

@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 count = 0
 countten = 10
 
-button_umu = input("DMを作成ボタンがありますか？(y/n)")
+button_umu = input("DMを作成ボタンがありますか？(y/n): ")
 kaisuu = int(input("グループスパムの回数: "))
 id1 = input("ターゲット1人目のdiscordID: ")
 id2 = input("ターゲット2人目のdiscordID: ")
@@ -31,9 +31,9 @@ with sync_playwright() as p:
        user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id2}'))")
        checkbox = user.locator("span[data-toggleable-component='checkbox']")
        checkbox.click()
-       page.click(f"xpath=//span[normalize-space(text())='グループDMの作成']")
+       page.click("xpath=//span[normalize-space(text())='グループDMの作成']")
      if button_umu == "y":
-       page.locator(f"xpath=//span[normalize-space(text())='DMの作成']").first.click()
+       page.locator("xpath=//span[normalize-space(text())='DMの作成']").first.click()
        #入力されたユーザーIDのチェックボックスをクリック
        user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id1}'))")
        checkbox = user.locator("span[data-toggleable-component='checkbox']")
@@ -41,9 +41,9 @@ with sync_playwright() as p:
        user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id2}'))")
        checkbox = user.locator("span[data-toggleable-component='checkbox']")
        checkbox.click()
-       page.locator(f"xpath=//span[normalize-space(text())='グループDMの作成']").click()
+       page.locator("xpath=//span[normalize-space(text())='グループDMの作成']").click()
    
-     locator = page.locator(f"xpath=//div[normalize-space(text())='グループの作成']")
+     locator = page.locator("xpath=//div[normalize-space(text())='グループの作成']")
      if locator.is_visible():
       locator.click()
      page.wait_for_timeout(2000)

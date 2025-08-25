@@ -2,7 +2,7 @@ from playwright.sync_api import sync_playwright
 from datetime import datetime
 count = 0
 count2 = 1
-button_umu = input("DMを作成ボタンがありますか？(y/n)")
+button_umu = input("DMを作成ボタンがありますか？(y/n): ")
 if button_umu == "y":
   nth_dis = 4
 if button_umu == "n":
