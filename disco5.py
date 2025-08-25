@@ -43,7 +43,7 @@ with sync_playwright() as p:
        checkbox = user.locator("span[data-toggleable-component='checkbox']")
        checkbox.click()
        page.locator(f"xpath=//span[normalize-space(text())='グループDMの作成']").click()
-     page.click("xpath=//div[normalize-space(text())='グループの作成']")
+     page.click(f"xpath=//div[normalize-space(text())='グループの作成']")
      page.wait_for_timeout(2000)
      if count > 0 and count % 10 == 0:
         page.wait_for_timeout(605000)
@@ -51,5 +51,6 @@ with sync_playwright() as p:
 
     print(f"グループスパムを {kaisuu} 回終えました。終了します。")
     browser.close()
+
 
 
