@@ -45,7 +45,10 @@ with sync_playwright() as p:
        page.locator(f"xpath=//span[normalize-space(text())='グループDMの作成']").click()
      page.click("xpath=//div[normalize-space(text())='グループの作成']")
      page.wait_for_timeout(2000)
+     if count > 0 and count % 10 == 0:
+        page.wait_for_timeout(600000)
      count += 1
 
     print(f"グループスパムを {kaisuu} 回終えました。終了します。")
     browser.close()
+
