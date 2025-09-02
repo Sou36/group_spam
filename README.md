@@ -38,5 +38,7 @@ playwright install
 
 すれば簡単に入れれます。過去に入れたことがあればしなくていいです。
 
+
+Release by:
 https://github.com/Sou36/group_spam
 
