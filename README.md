@@ -22,11 +22,21 @@ disco6.py→逆に自分がグループスパムされた時など、グルー�
 
 ---
 
-### ～githubからのダウンロード方法～
+### ～実行環境～
 
-Releasesと書いてある所、
-もしくは右上の緑のCodeからzipをダウンロード。
-その後お好きな場所に解凍してください。
+pythonのplaywright準備してから実行してください。
+
+playwrightはCMDで
+```cmd
+pip install playwright
+```
+
+その後CMDで
+```cmd
+playwright install
+```
+
+すれば簡単に入れれます。過去に入れたことがあればしなくていいです。
 
 
 
