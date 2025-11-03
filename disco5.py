@@ -26,21 +26,17 @@ with sync_playwright() as p:
        page.locator("div[role='button'][aria-label='DMの作成']").click()
        #入力されたユーザーIDのチェックボックスをクリック
        user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id1}'))")
-       checkbox = user.locator("span[data-toggleable-component='checkbox']")
-       checkbox.click()
+       user.click()
        user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id2}'))")
-       checkbox = user.locator("span[data-toggleable-component='checkbox']")
-       checkbox.click()
+       user.click()
        page.click("xpath=//span[normalize-space(text())='グループDMの作成']")
      if button_umu == "y":
        page.locator("xpath=//span[normalize-space(text())='DMの作成']").first.click()
        #入力されたユーザーIDのチェックボックスをクリック
        user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id1}'))")
-       checkbox = user.locator("span[data-toggleable-component='checkbox']")
-       checkbox.click()
+       user.click()
        user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id2}'))")
-       checkbox = user.locator("span[data-toggleable-component='checkbox']")
-       checkbox.click()
+       user.click()
        page.locator("xpath=//span[normalize-space(text())='グループDMの作成']").click()
    
      locator = page.locator("xpath=//div[normalize-space(text())='グループの作成']")
@@ -48,7 +44,7 @@ with sync_playwright() as p:
       locator.click()
      page.wait_for_timeout(2000)
      if count > 0 and count % 10 == 0:
-        page.wait_for_timeout(605000)
+        page.wait_for_timeout(610000)
      count += 1
 
     print(f"グループスパムを {kaisuu} 回終えました。終了します。")

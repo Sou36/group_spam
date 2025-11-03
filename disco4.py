@@ -6,7 +6,7 @@ button_umu = input("DMを作成ボタンがありますか？(y/n): ")
 if button_umu == "y":
   nth_dis = 4
 if button_umu == "n":
-  nth_dis = 3
+  nth_dis = 4
 sikake_ninzuu = int(input("何人に仕掛けますか？(1 or 2)"))
 print("先にグループが連続してあることを確認してください。")
 kaisuu = int(input("グループスパムの回数: "))
@@ -22,25 +22,33 @@ with sync_playwright() as p:
     page.wait_for_timeout(5000)
     while kaisuu != count:
      page.locator("li").nth(nth_dis).click()
+     page.wait_for_timeout(100)
      page.wait_for_selector("div[role='button'][aria-label='DMにフレンドを追加']",timeout=10000)
+     page.wait_for_timeout(100)
      page.locator("div[role='button'][aria-label='DMにフレンドを追加']").click()
+     page.wait_for_timeout(100)
      #入力されたユーザーIDのチェックボックスをクリック
      user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id1}'))")
-     checkbox = user.locator("span[data-toggleable-component='checkbox']")
-     checkbox.click()
+     page.wait_for_timeout(100)
+     user.click()
+     page.wait_for_timeout(100)
      if sikake_ninzuu == 2:
       user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id2}'))")
-      checkbox = user.locator("span[data-toggleable-component='checkbox']")
-      checkbox.click()
+      page.wait_for_timeout(100)
+      user.click()
      #追加ボタンをクリック
+     page.wait_for_timeout(100)
      page.click("xpath=//span[normalize-space(text())='追加']")
-     page.wait_for_timeout(1000)
+     
+     page.wait_for_timeout(100)
      if button_umu == "y":
+      if nth_dis != 5:
+        page.click("xpath=//div[normalize-space(text())='グループの作成']")
+        page.wait_for_timeout(100)
+     if button_umu == "n":
       if nth_dis != 4:
         page.click("xpath=//div[normalize-space(text())='グループの作成']")
-     if button_umu == "n":
-      if nth_dis != 3:
-        page.click("xpath=//div[normalize-space(text())='グループの作成']")
+        page.wait_for_timeout(100)
      nth_dis += 1
      if count > 0 and count % 10 == 0:#10回おきに10分待機 
        time = datetime.now().strftime("%H:%M:%S")
