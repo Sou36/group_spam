@@ -42,10 +42,10 @@ with sync_playwright() as p:
       if nth_dis != 3:
         page.click("xpath=//div[normalize-space(text())='グループの作成']")
      nth_dis += 1
-     if count > 0 and count % 10 == 0:#10回おきに待った回数×1分+6分待機 
+     if count > 0 and count % 10 == 0:#10回おきに10分待機 
        time = datetime.now().strftime("%H:%M:%S")
-       print(f"待機開始{time}。現在の待機時間は{count2 + 6}分です。")
-       page.wait_for_timeout(count2 * 60000 + 360000)
+       print(f"待機開始{time}。")
+       page.wait_for_timeout(600000)
        time = datetime.now().strftime("%H:%M:%S")
        print(f"待機終了{time}。")
        count2 += 1
