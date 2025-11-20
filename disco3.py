@@ -1,20 +1,28 @@
+import glob
 from playwright.sync_api import sync_playwright
 from datetime import datetime
 count = 0
 count2 = 1
-button_umu = input("DMを作成ボタンがありますか？(y/n): ")
-if button_umu == "y":
-  nth_dis = 4
-if button_umu == "n":
-  nth_dis = 3
-sikake_ninzuu = int(input("何人に仕掛けますか？(1 or 2)"))
+
+json_files = glob.glob("*.json")
+for i, f in enumerate(json_files, start=1):
+    print(f"{i}. {f}")
+choice = int(input("どのログイン情報にしますか？(番号で指定): ")) - 1
+login_num = json_files[choice]
+button_num = input("DMを作成ボタンがありますか？(y/n): ")
+if button_num == "y":
+  nth_dis = 6
+if button_num == "n":
+  nth_dis = 5
+esc_num = input("グループを作った後抜けますか？(y/n): ")
 kaisuu = int(input("グループスパムの回数: "))
+sikake_ninzuu = int(input("何人に仕掛けますか？(1 or 2): "))
 id1 = input("ターゲット1人目のdiscordID: ")
 if sikake_ninzuu == 2:
  id2 = input("ターゲット2人目のdiscordID: ")
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=False)
-    context = browser.new_context(storage_state="discord_login.json")
+    context = browser.new_context(storage_state=f"{login_num}")
     page = context.new_page()
     page.goto("https://discord.com/channels/@me") #最初に開く画面
     page.wait_for_timeout(5000)
@@ -22,28 +30,39 @@ with sync_playwright() as p:
      page.locator("li").nth(nth_dis).click()
      page.wait_for_selector("div[role='button'][aria-label='DMにフレンドを追加']",timeout=10000)
      page.locator("div[role='button'][aria-label='DMにフレンドを追加']").click()
+     page.wait_for_timeout(1000)
      #入力されたユーザーIDのチェックボックスをクリック
-     user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id1}'))")
-     checkbox = user.locator("span[data-toggleable-component='checkbox']")
-     checkbox.click()
+     span = page.locator("span", has_text=id1)
+     block = span.locator("..").locator("..").locator("..").locator("..")
+     checkbox = block.locator("[class*='checkbox']")
+     checkbox.first.click(force=True)
+
      if sikake_ninzuu == 2:
-       user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id2}'))")
-       checkbox = user.locator("span[data-toggleable-component='checkbox']")
-       checkbox.click()
-     #追加ボタンをクリック
+       span = page.locator("span", has_text=id2)
+       block = span.locator("..").locator("..").locator("..").locator("..")
+       checkbox = block.locator("[class*='checkbox']")
+       checkbox.first.click(force=True)
      page.click("xpath=//span[normalize-space(text())='追加']")
-     #グループ脱退のバツマーク
-     page.wait_for_timeout(2000)
-     target = page.locator("li").nth(nth_dis)
-     target.click(button="right")
-     page.click("xpath=//div[normalize-space(text())='グループから脱退する']")
-     #抜ける確認ボタン
-     page.wait_for_selector("xpath=//button/div[normalize-space(text())='グループから脱退する']",timeout=10000)
-     page.click("xpath=//button/div[normalize-space(text())='グループから脱退する']")
-     if count > 0 and count % 10 == 0:##10回おきに待った回数×1分+6分待機
+     page.wait_for_timeout(1000)
+     #グループ被りの確認画面が出てきたらクリック
+     locator = page.locator("xpath=//span[normalize-space(text())='グループの作成']")
+     if locator.is_visible():
+      locator.click()
+     page.wait_for_timeout(1000)
+     if esc_num == "y":
+      #グループ脱退のバツマーク
+      target = page.locator("li").nth(nth_dis)
+      target.click(button="right")
+      page.click("xpath=//div[normalize-space(text())='グループから脱退する']")
+      page.wait_for_timeout(1000)
+      #抜ける確認ボタン
+      page.click("xpath=//button/div[normalize-space(text())='グループから脱退する']")
+     if esc_num == "n":
+       nth_dis += 1
+     if count > 0 and count % 10 == 0:
        time = datetime.now().strftime("%H:%M:%S")
        print(f"待機開始{time}。現在の待機時間は{count2 + 6}分です。")
-       page.wait_for_timeout(count2 * 60000 + 360000)
+       page.wait_for_timeout(count2 * 60000 + 360000)#10回おきに待った回数×1分+6分待機
        time = datetime.now().strftime("%H:%M:%S")
        print(f"待機終了{time}。")
        count2 += 1

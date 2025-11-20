@@ -1,54 +1,47 @@
+import glob
 from playwright.sync_api import sync_playwright
-from datetime import datetime, timedelta
 
 count = 0
-countten = 10
+nth_dis = 0
+kaisuu_kenti = 1
 
-button_umu = input("DMを作成ボタンがありますか？(y/n): ")
-kaisuu = int(input("グループスパムの回数: "))
-id1 = input("ターゲット1人目のdiscordID: ")
-id2 = input("ターゲット2人目のdiscordID: ")
-kaisuuwaru = kaisuu // 10
-minutes = kaisuuwaru * 5 
-now = datetime.now()
-future = now + timedelta(minutes=minutes)
+json_files = glob.glob("*.json")
+for i, f in enumerate(json_files, start=1):
+    print(f"{i}. {f}")
+choice = int(input("どのログイン情報にしますか？(番号で指定): ")) - 1
+login_num = json_files[choice]
 
-print(f"終了予想時刻:", future.strftime("%H:%M:%S"))
+name = input("グループ名を入力: ")
+kaisuu = input("グループを抜ける回数(全部抜ける場合fと入力): ")
+if kaisuu != "f":
+  kaisuu = int(kaisuu)
+
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=False)
-    context = browser.new_context(storage_state="discord_login.json")
+    context = browser.new_context(storage_state=f"{login_num}")
     page = context.new_page()
     page.goto("https://discord.com/channels/@me") #最初に開く画面
     page.wait_for_timeout(5000)
-    #グループ作る＋をクリック
-    while kaisuu != count:
-     if button_umu == "n":
-       page.locator("div[role='button'][aria-label='DMの作成']").click()
-       #入力されたユーザーIDのチェックボックスをクリック
-       user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id1}'))")
-       user.click()
-       user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id2}'))")
-       user.click()
-       page.click("xpath=//span[normalize-space(text())='グループDMの作成']")
-     if button_umu == "y":
-       page.locator("xpath=//span[normalize-space(text())='DMの作成']").first.click()
-       #入力されたユーザーIDのチェックボックスをクリック
-       user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id1}'))")
-       user.click()
-       user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id2}'))")
-       user.click()
-       page.locator("xpath=//span[normalize-space(text())='グループDMの作成']").click()
-   
-     locator = page.locator("xpath=//div[normalize-space(text())='グループの作成']")
-     if locator.is_visible():
-      locator.click()
-     page.wait_for_timeout(2000)
-     if count > 0 and count % 10 == 0:
-        page.wait_for_timeout(610000)
-     count += 1
 
-    print(f"グループスパムを {kaisuu} 回終えました。終了します。")
+    #入力された名前のliを探す
+    ligroup = page.locator(f"//div[contains(@class, 'overflowTooltip__972a0') and normalize-space(.)='{name}']")
+    ligroup_count = ligroup.count()
+    print("divの数",ligroup_count)
+    if kaisuu != "f":
+     kaisuu_kenti = kaisuu
+    else:
+     kaisuu_kenti = ligroup_count
+
+    for i in range(kaisuu_kenti):
+     #上のを右クリックしてグループ脱退
+     target = ligroup.nth(nth_dis)
+     target.click(button="right")
+     page.click("xpath=//div[normalize-space(text())='グループから脱退する']")
+     #抜ける確認ボタン
+     page.wait_for_selector("xpath=//button/div[normalize-space(text())='グループから脱退する']",timeout=10000)
+     page.click("xpath=//button/div[normalize-space(text())='グループから脱退する']")
+    if kaisuu != "f":
+     print(f"グループを{kaisuu}個抜け終えました。終了します。")
+    else:
+      print(f"{name}を全て抜け終えました。終了します。")
     browser.close()
-
-
-

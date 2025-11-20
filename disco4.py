@@ -1,66 +1,76 @@
+import glob
 from playwright.sync_api import sync_playwright
-from datetime import datetime
+from datetime import datetime, timedelta
+
 count = 0
-count2 = 1
+countten = 10
+
+json_files = glob.glob("*.json")
+for i, f in enumerate(json_files, start=1):
+    print(f"{i}. {f}")
+choice = int(input("どのログイン情報にしますか？(番号で指定): ")) - 1
+login_num = json_files[choice]
+
 button_umu = input("DMを作成ボタンがありますか？(y/n): ")
-if button_umu == "y":
-  nth_dis = 4
-if button_umu == "n":
-  nth_dis = 4
-sikake_ninzuu = int(input("何人に仕掛けますか？(1 or 2)"))
-print("先にグループが連続してあることを確認してください。")
 kaisuu = int(input("グループスパムの回数: "))
 id1 = input("ターゲット1人目のdiscordID: ")
-if sikake_ninzuu == 2:
- id2 = input("ターゲット2人目のdiscordID: ")
+id2 = input("ターゲット2人目のdiscordID: ")
+kaisuuwaru = kaisuu // 10
+minutes = kaisuuwaru * 5 
+now = datetime.now()
+future = now + timedelta(minutes=minutes)
 
+print(f"終了予想時刻:", future.strftime("%H:%M:%S"))
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=False)
-    context = browser.new_context(storage_state="discord_login.json")
+    context = browser.new_context(storage_state=f"{login_num}")
     page = context.new_page()
     page.goto("https://discord.com/channels/@me") #最初に開く画面
     page.wait_for_timeout(5000)
+    #グループ作る＋をクリック
     while kaisuu != count:
-     page.locator("li").nth(nth_dis).click()
-     page.wait_for_timeout(100)
-     page.wait_for_selector("div[role='button'][aria-label='DMにフレンドを追加']",timeout=10000)
-     page.wait_for_timeout(100)
-     page.locator("div[role='button'][aria-label='DMにフレンドを追加']").click()
-     page.wait_for_timeout(100)
-     #入力されたユーザーIDのチェックボックスをクリック
-     user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id1}'))")
-     page.wait_for_timeout(100)
-     user.click()
-     page.wait_for_timeout(100)
-     if sikake_ninzuu == 2:
-      user = page.locator(f"div.friendWrapper_bbd192:has(span:has-text('{id2}'))")
-      page.wait_for_timeout(100)
-      user.click()
-     #追加ボタンをクリック
-     page.wait_for_timeout(100)
-     page.click("xpath=//span[normalize-space(text())='追加']")
-     
-     page.wait_for_timeout(100)
-     if button_umu == "y":
-      if nth_dis != 5:
-        page.click("xpath=//div[normalize-space(text())='グループの作成']")
-        page.wait_for_timeout(100)
      if button_umu == "n":
-      if nth_dis != 4:
-        page.click("xpath=//div[normalize-space(text())='グループの作成']")
-        page.wait_for_timeout(100)
-     nth_dis += 1
-     if count > 0 and count % 10 == 0:#10回おきに10分待機 
-       time = datetime.now().strftime("%H:%M:%S")
-       print(f"待機開始{time}。")
-       page.wait_for_timeout(600000)
-       time = datetime.now().strftime("%H:%M:%S")
-       print(f"待機終了{time}。")
-       count2 += 1
+       page.locator("div[role='button'][aria-label='DMの作成']").click()
+       #入力されたユーザーIDのチェックボックスをクリック
+       page.wait_for_timeout(1000)
+       span = page.locator("span", has_text=id1)
+       block = span.locator("..").locator("..").locator("..").locator("..")
+       checkbox = block.locator("[class*='checkbox']")
+       checkbox.first.click(force=True)
+       #2人目
+       page.wait_for_timeout(500)
+       span = page.locator("span", has_text=id2)
+       block = span.locator("..").locator("..").locator("..").locator("..")
+       checkbox = block.locator("[class*='checkbox']")
+       checkbox.first.click(force=True)
+       page.wait_for_timeout(1000)
+     if button_umu == "y":
+       page.locator("xpath=//span[normalize-space(text())='DMの作成']").first.click()
+       #入力されたユーザーIDのチェックボックスをクリック
+       page.wait_for_timeout(1000)
+       span = page.locator("span", has_text=id1)
+       block = span.locator("..").locator("..").locator("..").locator("..")
+       checkbox = block.locator("[class*='checkbox']")
+       checkbox.first.click(force=True)
+       #2人目
+       page.wait_for_timeout(500)
+       span = page.locator("span", has_text=id2)
+       block = span.locator("..").locator("..").locator("..").locator("..")
+       checkbox = block.locator("[class*='checkbox']")
+       checkbox.first.click(force=True)
+       page.wait_for_timeout(1000)
+     page.locator("xpath=//span[normalize-space(text())='グループDMの作成']").click()
+     page.wait_for_timeout(2000)
+     locator = page.locator("xpath=//span[normalize-space(text())='グループの作成']")
+     if locator.is_visible():
+      locator.click()
+     page.wait_for_timeout(1000)
+     if count > 0 and count % 10 == 0:
+        page.wait_for_timeout(600000)#10回終わるごとに10分待機
      count += 1
-    print(f"{kaisuu}回グループにターゲットを入れて抜けました。終了します。")
-    browser.close()
 
+    print(f"グループスパムを {kaisuu} 回終えました。終了します。")
+    browser.close()
 
 
 

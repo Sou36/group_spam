@@ -1,8 +1,16 @@
+import glob
 from playwright.sync_api import sync_playwright
 from datetime import datetime, timedelta
 
 count = 0
 countten = 10
+
+json_files = glob.glob("*.json")
+for i, f in enumerate(json_files, start=1):
+    print(f"{i}. {f}")
+choice = int(input("どのログイン情報にしますか？(番号で指定): ")) - 1
+login_num = json_files[choice]
+
 button_umu = input("DMを作成ボタンがありますか？(y/n): ")
 kaisuu = int(input("グループを作る回数（10がおすすめ）: "))
 kaisuuwaru = kaisuu // 10
@@ -14,7 +22,7 @@ print(f"終了予想時刻:", future.strftime("%H:%M:%S"))
 
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=False)
-    context = browser.new_context(storage_state="discord_login.json")
+    context = browser.new_context(storage_state=f"{login_num}")
     page = context.new_page()
     page.goto("https://discord.com/channels/@me") #最初に開く画面
     page.wait_for_timeout(5000)
